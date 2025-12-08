@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Todo List JS</title>
+    <style>
+        body {
+            max-width: 600px;
+            margin: 2rem auto;
+            font-family: Arial, sans-serif;
+        }
+
+        input {
+            width: 70%;
+            padding: 0.5rem;
+            font-size: 1rem;
+        }
+
+        button {
+            padding: 0.5rem 1rem;
+            margin-left: 0.5rem;
+            font-size: 1rem;
+        }
+
+        ul {
+            margin-top: 2rem;
+            padding-left: 1.2rem;
+        }
+
+        li {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Todo List JS</h1>
+
+    <input id="todo-input" type="text" placeholder="Nouvelle tâche" />
+    <button id="add-btn">Ajouter</button>
+
+    <ul id="todo-list"></ul>
+
+    <script>
+        const apiUrl = 'http://localhost:3000/todos';
+
+        const input = document.getElementById('todo-input');
+        const addBtn = document.getElementById('add-btn');
+        const todoList = document.getElementById('todo-list');
+
+        // Charger les todos depuis l'API
+        async function loadTodos() {
+            todoList.innerHTML = 'Chargement...';
+            try {
+                const res = await fetch(apiUrl);
+                if (!res.ok) throw new Error('HTTP error! status: ' + res.status);
+                const todos = await res.json();
+                todoList.innerHTML = '';
+                todos.forEach(todo => {
+                    const li = document.createElement('li');
+                    li.textContent = todo.text;
+                    todoList.appendChild(li);
+                });
+            } catch (e) {
+                console.error('Erreur fetch:', e);
+                todoList.innerHTML = 'Erreur de chargement.';
+            }
+        }
+
+
+        // Ajouter un todo via l'API
+        async function addTodo() {
+            const text = input.value.trim();
+            if (!text) return;
+            addBtn.disabled = true;
+            try {
+                await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text }),
+                });
+                input.value = '';
+                await loadTodos();
+            } catch (e) {
+                alert('Erreur lors de l\'ajout');
+            } finally {
+                addBtn.disabled = false;
+                input.focus();
+            }
+        }
+
+        addBtn.addEventListener('click', addTodo);
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') addTodo();
+        });
+
+        // Chargement initial
+        loadTodos();
+    </script>
+</body>
+
+</html>
