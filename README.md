@@ -1,3 +1,5 @@
+<img src="./logo-todolist.svg" alt="Logo" style="width:100vw; height:auto;">
+
 # Todo List JS – Documentation
 
 ## Fonctionnalités de l’application
@@ -45,73 +47,77 @@ Ouvrir le fichier `frontend/index.html` dans votre navigateur ou lancer un serve
 ```sh
 python3 -m http.server 8080
 ```
+Cette application est une Todo List : elle permet de gérer vos tâches quotidiennes facilement. Vous pouvez ajouter de nouvelles tâches, consulter la liste des tâches existantes, et organiser votre travail. L’interface est simple et accessible depuis un navigateur web, tandis que les données sont stockées de façon sécurisée dans une base MySQL.
 
-## Architecture générale
-
-### Technologies utilisées
-
-- **Frontend** : HTML, JavaScript (aucun framework)
-- **Backend** : Node.js, Express.js, MySQL2
-- **Base de données** : MySQL 8
-
-### Architecture Docker
-
-- **api-dev** : Conteneur Node.js pour l’API Express (profil `dev`)
-- **api-prod** : Conteneur Node.js pour l’API Express (profil `prod`)
-- **db** : Conteneur MySQL avec données de test (profil `dev`)
-- **db-prod** : Conteneur MySQL sans données de test (profil `prod`)
-- **Volumes** : `dev-db-data` pour persistance des données en dev
-
-## Environnements et différences
-
-| Environnement | Conteneur DB      | Seed de données | Host DB      | Vérification accès DB         |
-|---------------|-------------------|----------------|--------------|------------------------------|
-| dev           | db                | Oui            | db           | user: root, pwd: password    |
-| prod          | db-prod           | Non            | db-prod      | user: root, pwd: password    |
-
-- **dev** : la base est initialisée avec des exemples (`seed-dev.sql`), volume persistant.
-- **prod** : seule la structure est créée (`init.sql`), pas de seed, pas de volume persistant.
-
-### Comment vérifier les environnements
+Ce projet est conçu pour être utilisé même par des personnes n’ayant jamais programmé. Voici les étapes à suivre :
+1. **Installer Docker et Docker Compose**
+	- Rendez-vous sur https://docs.docker.com/get-docker/ et suivez les instructions pour votre système (Windows, Mac, Linux).
+2. **Télécharger le projet**
+	- Clonez le dépôt ou téléchargez les fichiers dans un dossier sur votre ordinateur.
+3. **Ouvrir un terminal**
+	- Naviguez dans le dossier du projet avec la commande `cd`.
+4. **Lancer l’application**
+	- Pour le développement :  
+	  ```sh
+	  docker compose --profile dev up --build
+	  ```
+	- Pour la production :  
+	  ```sh
+	  docker compose --profile prod up --build
+	  ```
+5. **Accéder à l’application**
+	- Ouvrez le fichier `frontend/index.html` dans votre navigateur, ou lancez un serveur local :
+	  ```sh
+	  python3 -m http.server 8080
+	  ```
+    - Et dirigez-vous sur [http://localhost:8080/frontend](http://localhost:8080/frontend)
+	- L’API est disponible sur [http://localhost:3000/todos](http://localhost:3000/todos)
 
 1. **Accès à la base de données**  
-	 Utiliser un client MySQL :  
-	 ```sh
-	 mysql -h 127.0.0.1 -P 3306 -u root -p
-	 ```
-	 Mot de passe : `password`
-   
-	 Vérifier la présence des données :  
-	 - En dev :  
-		 ```sql
+L’application est composée de trois parties :
+- **Frontend** : HTML et JavaScript, accessible via le navigateur, situé dans le dossier `frontend/`.
+- **Backend** : Node.js avec Express.js, gère les requêtes API et la logique métier, situé dans le dossier `backend/`.
+- **Base de données** : MySQL, stocke les tâches, initialisée via les fichiers SQL dans le dossier `db/`.
+
+**Architecture Docker** :
+- Un conteneur pour l’API (backend)
+- Un conteneur pour la base de données (MySQL)
+- Les profils `dev` et `prod` permettent de choisir entre une base avec des exemples ou une base vide.
+- Les volumes Docker assurent la persistance des données en développement.
 		 USE todos;
-		 SELECT * FROM todos;
-		 ```
-		 → Devrait afficher les tâches de test.
-	 - En prod :  
-		 ```sql
-		 USE todos;
-		 SELECT * FROM todos;
-		 ```
-		 → Devrait être vide.
+Deux environnements sont disponibles :
 
-2. **Accès API**  
-	 Tester avec :  
-	 ```sh
-	 curl http://localhost:3000/todos
-	 ```
-	 Ajouter une tâche :  
-	 ```sh
-	 curl -X POST -H "Content-Type: application/json" -d '{"text":"Nouvelle tâche"}' http://localhost:3000/todos
-	 ```
+**Développement (dev)**
+- Conteneur DB : `db`
+- Données de test insérées automatiquement (`seed-dev.sql`)
+- Volume Docker pour garder les données entre les redémarrages
+- Accès complet à la base : user `root`, mot de passe `password`, base `todos`
 
-## Accès administrateur
+**Production (prod)**
+- Conteneur DB : `db-prod`
+- Base initialisée sans données de test (`init.sql` uniquement)
+- Pas de volume persistant
+- Accès complet à la base : user `root`, mot de passe `password`, base `todos`
 
-- **MySQL** : accès complet avec `root`/`password` dans les deux environnements.
-- **API** : pas d’authentification, accès libre pour les tests.
+**Vérification**
+1. Se connecter à MySQL :
+	```sh
+	docker exec -it docker-db-1 mysql -ppassword
+	```
 
-### fonctionnalités de l’app
-### instructions d’installation & exécution
-### architecture générale de l’application: technologies (front, back, BD), architecture Docker (quoi dans quel conteneur)…
-### Indication de 2 environnements choisis et les caractéristiques les différentiant + comment les vérifier (attention à donner tous les droits d’accès nécessaires aux vérifications : user/pwd BD, compte admin, etc)
+2. Vérifier la base :
+	```sql
+	USE todos;
+	SELECT * FROM todos;
+	```
+	- En dev : des tâches de test sont présentes
+	- En prod : la table est vide
+3. Accès API :
+
+	- [http://localhost:3000/todos](http://localhost:3000/todos)
+	- En dev : retourne la liste de tâches de test
+	- En prod : retourne une liste vide
+4. Droits d’accès :
+	- Utilisateur MySQL : `root`, mot de passe `password` (admin)
+	- L’API ne nécessite pas d’authentification
 
