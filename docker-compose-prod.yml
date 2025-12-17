@@ -1,0 +1,30 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: db
+      LOG_LEVEL: debug
+      DEBUG: "true"
+    depends_on:
+      - db
+
+  frontend:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+
+  db:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: todos
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - prod-db-data:/var/lib/mysql
+
+volumes:
+  prod-db-data:
