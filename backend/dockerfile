@@ -2,12 +2,12 @@ FROM node:20
 
 # Backend
 WORKDIR /app/backend
-COPY backend/package*.json ./
+COPY package*.json ./
 RUN npm install
-COPY backend .
+COPY . .
 
-# Frontend statique
-COPY frontend /app/frontend
+
+
 
 # Port du backend
 EXPOSE 3000

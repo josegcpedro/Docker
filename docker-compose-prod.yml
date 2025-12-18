@@ -1,6 +1,8 @@
+version: "3.8"
+
 services:
   app:
-    image: pedrowww777/app:latest
+    image: pedrowww777/app:prod
     ports:
       - "3000:3000"
     environment:
@@ -11,19 +13,18 @@ services:
       - db
 
   frontend:
-    image: nginx:alpine
+    image: pedrowww777/frontend:prod
     ports:
       - "8080:80"
-    volumes:
-      - ./frontend:/usr/share/nginx/html:ro
 
   db:
-    image: mysql:8
+    image: pedrowww777/mysql:prod
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: todos
+    ports:
+      - "3306:3306"
     volumes:
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
       - prod-db-data:/var/lib/mysql
 
 volumes:
