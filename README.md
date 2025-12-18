@@ -40,7 +40,7 @@ docker compose -f docker-compose-prod.yml up -d
 
 ##### Accès MySQL : 
 ```sh
-docker exec -it laborendufinal-db-1 mysql -u root -p
+docker exec -it <nom_du_container>-db-1 mysql -u root -p
 ```
 - Le mot de pass est "password"
 
