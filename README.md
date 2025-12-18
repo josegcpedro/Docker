@@ -26,7 +26,7 @@ docker compose -f docker-compose-dev.yml up -d
 - Accès API : [http://localhost:3000/todos](http://localhost:3000/todos)
 ##### Accès MySQL : 
 ```sh
-docker exec -it laborendufinal-db-1 mysql -u root -p
+docker exec -it <nom_du_container>-db-1 mysql -u root -p
 ```
 - Le mot de pass est "password"
 
