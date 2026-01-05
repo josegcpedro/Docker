@@ -16,7 +16,15 @@
 
 ### Démarrage
 
+#### Telechargement
+
+```sh
+git clone git@github.com:josegcpedro/Docker.git
+```
+
 #### Environnement de développement
+
+##### Accédez au dossier contenant le projet et entrez les commandes suivantes 
 
 ```sh
 docker compose -f docker-compose-dev.yml up -d
@@ -29,6 +37,12 @@ docker compose -f docker-compose-dev.yml up -d
 docker exec -it <nom_du_container>-db-1 mysql -u root -p
 ```
 - Le mot de pass est "password"
+
+##### Pour consulter le contenu de la base de données
+```sh
+USE todos;
+SELECT * FROM todos;
+```
 
 #### Environnement de production
 
@@ -44,6 +58,12 @@ docker exec -it <nom_du_container>-db-1 mysql -u root -p
 ```
 - Le mot de pass est "password"
 
+##### Pour consulter le contenu de la base de données
+```sh
+USE todos;
+SELECT * FROM todos;
+```
+
 - Pas de données de test (seulement la structure de la base).
 
 
@@ -53,7 +73,7 @@ docker exec -it <nom_du_container>-db-1 mysql -u root -p
 - Un conteneur pour le front (forntend-1)
 
 **Développement (dev)**
-- Conteneur DB : `db`
+- Conteneur DB : `db-dev`
 - Données de test insérées automatiquement (`seed-dev.sql`)
 - Accès complet à la base : user `root`, mot de passe `password`, base `todos`
 - Pas de message de log etc...
@@ -68,9 +88,21 @@ docker exec -it <nom_du_container>-db-1 mysql -u root -p
 
 # Documentation pour dockerhub
 
+### Entrez les commandes suivantes pour télécharger l'image
+
+### Environnement DEV
+
+```sh
+docker pull pedrowww777/frontend:dev
+```
+```sh
+docker pull pedrowww777/app:dev
+```
+```sh
+docker pull pedrowww777/mysql:dev
+```
 
 -Ensuite créer un docker-compose.yml
-#### Si c'est pour l'environnement de dev ajouter:
 
 ```sh
 version: "3.8"
@@ -113,7 +145,19 @@ docker compose -f docker-compose.yml up -d
 ```
 
 
-#### Si c'est pour l'environnement de prod ajouter:
+### Environnement PROD
+
+```sh
+docker pull pedrowww777/frontend:prod
+```
+```sh
+docker pull pedrowww777/app:prod
+```
+```sh
+docker pull pedrowww777/mysql:prod
+```
+
+-Ensuite créer un docker-compose.yml
 
 ```sh
 version: "3.8"
@@ -125,8 +169,8 @@ services:
       - "3000:3000"
     environment:
       DB_HOST: db
-      LOG_LEVEL: warn
-      DEBUG: "false"
+      LOG_LEVEL: debug
+      DEBUG: "true"
     depends_on:
       - db
 
@@ -155,6 +199,20 @@ volumes:
 docker compose -f docker-compose.yml up -d
 ```
 
+#### Accédez au dossier contenant le projet et entrez les commandes suivantes 
 
-#### Ensuite lire la documentation en haut pour le reste 
 
+- Accès Front : [http://localhost:8080](http://localhost:8080)
+
+- Accès API : [http://localhost:3000/todos](http://localhost:3000/todos)
+##### Accès MySQL : 
+```sh
+docker exec -it <nom_du_container>-db-1 mysql -u root -p
+```
+- Le mot de pass est "password"
+
+##### Pour consulter le contenu de la base de données
+```sh
+USE todos;
+SELECT * FROM todos;
+```
